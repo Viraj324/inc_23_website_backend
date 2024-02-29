@@ -59,11 +59,11 @@ function emailService() {
             judge.domains = judge.domains.map(domain => projectDomains[domain])
             judge.slots = judge.slots.map(slot => slotsData[slot])
             const mailOptions = {
-                from: `InC\'2023 Judging <${officialEmails.get('judging')}>`,
+                from: `InC\'2024 Judging <${officialEmails.get('judging')}>`,
                 to: `${judge.name} ${judge.email}`,
                 bcc: officialEmails.get('queries'),
                 replyTo: officialEmails.get('queries'),
-                subject: 'Registered for PICT InC 2023 Judging',
+                subject: 'Registered for PICT InC 2024 Judging',
                 priority: 'high',
                 text: 'Email content',
                 html: await emailTemplates.judgeRegistrationEmail(judge)
@@ -85,11 +85,11 @@ function emailService() {
             })
             event_name = event_name.charAt(0).toUpperCase() + event_name.slice(1)
             const mailOptions = {
-                from: `InC\'2023 Judging <${officialEmails.get('judging')}>`,
+                from: `InC\'2024 Judging <${officialEmails.get('judging')}>`,
                 to: `${judge.name} ${judge.email}`,
                 cc: officialEmails.get('official'),
                 replyTo: officialEmails.get('judging'),
-                subject: `Updated Judging Schedule for PICT InC 2023 - ${event_name}`,
+                subject: `Updated Judging Schedule for PICT InC 2024 - ${event_name}`,
                 priority: 'high',
                 text: 'Email content',
                 html: await emailTemplates.sendAllocationEmail(event_name, projects, judge)
