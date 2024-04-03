@@ -22,9 +22,27 @@ function filesServices(db) {
         }
     }
 
+    async function getIDFile(emails) {
+        try {
+          const [results] = await db.execute(`SELECT * FROM files_verify`)
+
+          console.log(results)
+        //   return results.reduce((acc, cur) => {
+        //     acc[cur.email] = cur.file;
+        //     return acc;
+        //   }, {});
+        return results;
+        } catch (err) {
+          throw new AppError(500, 'fail', err.message || err);
+        }
+      }
+      
+      
+
     return {
         checkFile,
         insertFile,
+        getIDFile
     }
 }
 

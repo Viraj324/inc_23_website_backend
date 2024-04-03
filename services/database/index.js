@@ -3,6 +3,7 @@ import eventsServices from './events/events.database.services.mjs';
 import filesServices from './files/files.database.services.mjs';
 import judgesServices from './judges/judges.database.services.mjs';
 import allocationServices from './allocations/allocations.database.services.mjs';
+import referralServices from './referral/referral.database.services.mjs';
 
 function databaseService(db) {
     return {
@@ -11,6 +12,7 @@ function databaseService(db) {
         filesServices: filesServices(db),
         judgesServices: judgesServices(db),
         allocationServices: allocationServices(db),
+        referralServices: referralServices(db)
     }
 }
 

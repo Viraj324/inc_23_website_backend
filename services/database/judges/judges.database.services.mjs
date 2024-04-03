@@ -3,6 +3,7 @@ import { AppError } from "../../../utils/index.js";
 import { eventsName } from "../../../static/eventsData.mjs";
 
 function judgesServices(db) {
+
   async function getJudge(data) {
     try {
       const [results] = await db
@@ -10,6 +11,7 @@ function judgesServices(db) {
         .catch((err) => {
           throw new AppError(400, "fail", err.sqlMessage);
         });
+      // console.log(results);
       return results[0];
     } catch (err) {
       throw err;
@@ -52,7 +54,7 @@ function judgesServices(db) {
 
   async function loginJudge(data) {
     try {
-    // console.log(data)
+      // console.log(data)
       const [results] = await db
         .execute(
           { sql: judgesQueries.loginJudge, namedPlaceholders: true },
@@ -67,8 +69,24 @@ function judgesServices(db) {
     }
   }
 
+  async function getCredentials(email) {
+    try {
+      // console.log("getcreds : ", email)
+      const [results] = await db
+        .execute(judgesQueries.getJudgeCreds(email))
+        .catch((err) => {
+          throw new AppError(400, "fail", err.sqlMessage);
+        });
+      return results[0];
+    } catch (err) {
+      throw err;
+    }
+  }
+
+
   async function getAllocatedProjects(jid) {
     try {
+      // console.log(jid)
       const [conceptsResults] = await db
         .execute(judgesQueries.getAllocatedProjects(jid, eventsName[0]))
         .catch((err) => {
@@ -101,7 +119,7 @@ function judgesServices(db) {
       switch (event_name) {
         case eventsName[1]:
           await db.execute({ sql: judgesQueries.insertImpetusEvaluation, namedPlaceholders: true }, data).catch(err => {
-            // console.log(err);
+
             throw new AppError(400, 'fail', err.sqlMessage)
           })
           break
@@ -121,9 +139,9 @@ function judgesServices(db) {
     }
   }
 
-  async function existingAllocation(pid, jid) {
+  async function existingAllocation(pid, jid, event_name) {
     try {
-      const [results] = await db.execute(judgesQueries.existingAllocation(pid, jid)).catch(err => {
+      const [results] = await db.execute(judgesQueries.existingEvaluation(pid, jid, event_name)).catch(err => {
         throw new AppError(400, 'fail', err.sqlMessage)
       })
       return results[0]
@@ -132,16 +150,63 @@ function judgesServices(db) {
     }
   }
 
+  async function getAllocatedProjectsofJudge(jid) {
+    try {
+      const [results] = await db.execute({
+        sql: `SELECT * FROM judge_allocations WHERE jid = ?`, // Complete the SQL query
+        values: [jid] // Include jid in the values array
+      });
+
+      // console.log(results);
+
+      return results;
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async function getProjectsNotEvaluatedByJudge(jid, pid) {
+    try {
+      // console.log("Querying with pid:", pid, "jid:", jid);
+      const [results] = await db.execute({
+        sql: `
+                SELECT COUNT(pid)
+                FROM concepts_evaluation AS ce
+                WHERE ce.pid = ? AND ce.jid = ?
+            `,
+        values: [pid[0], jid]
+      });
+
+      // console.log(pid, jid, ':', results)
+      if (results.length === 0 || results[0]['COUNT(pid)'] === 0) {
+        return pid;
+      }
+      return null;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+
+
+
   return {
     loginJudge,
+    getCredentials,
     getJudge,
     getJudges,
     insertJudge,
     getAllocatedProjects,
     modifySlots,
     evaluateProject,
-    existingAllocation
+    existingAllocation,
+    getAllocatedProjectsofJudge,
+    getProjectsNotEvaluatedByJudge
   }
 }
 
 export default judgesServices;
+
+
+
+

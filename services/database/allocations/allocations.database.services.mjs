@@ -46,12 +46,12 @@ function allocationServices(db) {
             throw err
         }
     }
-
+    
     return {
         getLabs,
         updateLab,
         allocate,
-        deallocate,
+        deallocate
     }
 }
 

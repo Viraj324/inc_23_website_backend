@@ -25,7 +25,7 @@ const printer = new PdfPrinter({
   ...fonts,
 });
 
-function createSynopsis(projects) {
+function createSynopsis(projects, event_name) {
   const AD = projects["APPLICATION DEVELOPMENT"];
   const CN = projects["COMMUNICATION NETWORKS AND SECURITY SYSTEMS"];
   const DS = projects["DIGITAL / IMAGE/ SPEECH / VIDEO PROCESSING"];
@@ -55,7 +55,7 @@ function createSynopsis(projects) {
               alignment: "left",
             },
             {
-              text: "Concepts Synopsis: InC 2023",
+              text: `${event_name} Synopsis: InC 2024`,
               fontSize: 10,
               italics: "true",
               alignment: "right",

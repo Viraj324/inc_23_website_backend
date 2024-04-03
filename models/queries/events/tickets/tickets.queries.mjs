@@ -15,6 +15,10 @@ function ticketQueries(tableName) {
 
     const editPaymentAndStep = `UPDATE ${tableName} SET step_no = ?, payment_id = ? WHERE ticket = ?;`
 
+    // const deleteMemberDetailsFromTicket = `UPDATE tickets
+    // SET step_2 = JSON_REMOVE(step_2, ${index})
+    // WHERE ticket = ?;`
+
 
     return {
         checkTicket,
@@ -23,7 +27,8 @@ function ticketQueries(tableName) {
         getPayment,
         insertTicket,
         editStepData,
-        editPaymentAndStep
+        editPaymentAndStep,
+        // deleteMemberDetailsFromTicket
     }
 }
 

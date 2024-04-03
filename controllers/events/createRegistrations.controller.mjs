@@ -35,8 +35,7 @@ function createRegistrationsController(
     try {
       const { event_name } = req.params;
       let { ticket } = req.signedCookies;
-      // console.log(ticket)
-      // console.log(ticket)
+
       const { email } = req.body;
       const user_email = await eventsServices.getUserRegistration(
         event_name,
@@ -57,6 +56,7 @@ function createRegistrationsController(
           step_2: [{ ...req.body }],
           step_no: 2,
         });
+        // console.log(req.body)
         await filesServices.insertFile(email, member_id_file);
         sendCookie(res, { ticket }, `/register/events/${event_name}`)
           .status(201)
@@ -95,6 +95,32 @@ function createRegistrationsController(
         .end();
     } catch (err) {
       next(err);
+    }
+  }
+
+  async function getAddedMembers(req, res, next) {
+    try {
+      let { ticket } = req.signedCookies;
+
+      const memberDetails = await eventsServices.getMembersFromTicket(ticket);
+      // console.log(memberDetails);
+      res.status(200).json(memberDetails)
+
+    } catch (error) {
+      // console.log(error)
+    }
+  }
+
+  async function deleteMember(req, res, next) {
+    try {
+      let { ticket } = req.signedCookies;
+      let { index } = req.body; // Assuming memberID is the key for the member details to delete
+
+      await eventsServices.deleteMemberDetails(ticket, index);
+      res.status(200).json({ message: 'Member details deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
 
@@ -232,11 +258,13 @@ function createRegistrationsController(
   return {
     saveProject,
     insertMember,
+    getAddedMembers,
     saveCollegeDetails,
     requestRegistration,
     verifyPendingPayment,
     updateProject,
     insertInternalPICT,
+    deleteMember
   };
 }
 

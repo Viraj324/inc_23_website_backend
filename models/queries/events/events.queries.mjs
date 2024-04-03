@@ -25,13 +25,6 @@ function eventsQueries(tableName) {
         return process.env[`INSERT_${event_name.toUpperCase()}_${no_of_members}`] + placeholders + ');'
     }
 
-
-
-
-
-
-
-
     const insertPICT = (no_of_members) => {
         let placeholders = ''
         for (let i = 0; i < no_of_members; i++) placeholders += ', ?, ?, ?'
@@ -53,6 +46,17 @@ function eventsQueries(tableName) {
     const updateProject = (data) => `UPDATE _projects INNER JOIN ${data.event_name}_group_info ON ${data.event_name}_projects.pid = ${data.event_name}_group_info.pid SET ${data.event_name}_projects.title = :title, ${data.event_name}_projects.abstract = :abstract, ${data.event_name}_group_info.mode = :mode WHERE ${data.event_name}_projects.pid = :pid;`
 
 
+    const getProjectAbstractQ = (pid, event_name) => {
+        return `SELECT title, abstract FROM ${event_name}_projects where pid = '${pid}'`;
+    }
+    
+    const updateProjectAbstractQ = (event_name, pid, abstract) => {
+        const escapedAbstract = abstract.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        return `UPDATE \`${event_name}_projects\` SET abstract = '${escapedAbstract}' where pid = '${pid}' ;`
+    };
+
+
+
 
     return {
         checkUserRegistration,
@@ -61,6 +65,8 @@ function eventsQueries(tableName) {
         insertImpetusPICT,
         getRegistrations,
         getProjects,
+        getProjectAbstractQ,
+        updateProjectAbstractQ,
         getProject,
         updateProject
     }

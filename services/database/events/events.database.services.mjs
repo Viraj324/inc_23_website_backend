@@ -57,6 +57,29 @@ function eventsServices(db) {
     }
   }
 
+  async function deleteMemberDetails(ticket, index) {
+    try {
+      // console.log(ticket);
+      const [results] = await db
+        .execute(`UPDATE tickets
+          SET step_2 = JSON_REMOVE(step_2, ?)
+          WHERE ticket = ?;`
+          , [`$[${index}]`, ticket])
+        .catch((err) => {
+          throw new AppError(400, 'fail', err.sqlMessage);
+        });
+
+      if (results.affectedRows > 0) {
+        return results;
+      } else {
+        throw new AppError(404, 'fail', 'Ticket not found or step_2 index out of bounds');
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+
   async function getPaymentDetails(pid, event_name) {
     try {
       const [results] = await db
@@ -200,9 +223,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -245,9 +268,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -294,9 +317,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -347,9 +370,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
           }
@@ -393,9 +416,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -439,9 +462,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -489,9 +512,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
 
@@ -543,9 +566,9 @@ function eventsServices(db) {
                 ticket,
                 payment_id,
                 techfiesta,
+                group_leader_email,
                 tech_group_id,
                 tech_Transaction_id,
-                group_leader_email,
               ];
               break;
           }
@@ -638,6 +661,36 @@ function eventsServices(db) {
       throw err;
     }
   }
+
+  async function getAbstractFrompid(pid, event_name) {
+    try {
+      const [results] = await db
+        .execute(eventsQueries.getProjectAbstractQ(pid, event_name))
+        .catch((err) => {
+          throw new AppError(400, "fail", err.sqlMessage);
+        });
+      return results;
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async function updateAbstractFrompid(pid, event_name, abstract) {
+    try {
+      const [results] = await db
+        .execute(eventsQueries.updateProjectAbstractQ(event_name, pid, abstract))
+        .catch((err) => {
+          throw new AppError(400, "fail", err.sqlMessage);
+        });
+      return results;
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
 
   async function getProjects(event_name) {
     try {
@@ -944,11 +997,14 @@ function eventsServices(db) {
     editPaymentAndStep,
     completeRegistration,
     getPendingPayments,
+    getAbstractFrompid,
+    updateAbstractFrompid,
     getProjects,
     getProject,
     updateProject,
     insertPICT,
     insertImpetusPICT,
+    deleteMemberDetails
   };
 }
 

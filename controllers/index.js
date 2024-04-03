@@ -8,3 +8,4 @@ export { default as creationsJudgesController } from './judges/creations.judges.
 export { default as gettingJudgesController } from './judges/getting.judges.controller.mjs'
 export { default as createAllocationController } from './allocations/create.allocations.controller.mjs'
 export { default as getAllocationController } from './allocations/getting.allocations.controller.mjs'
+export { default as referralController } from './referral/referral.controller.mjs'
