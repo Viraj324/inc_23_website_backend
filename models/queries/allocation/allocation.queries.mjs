@@ -19,13 +19,32 @@ function allocationQueries() {
     return `DELETE FROM allocations WHERE (pid IN  ('${pids[0]}'${placeholders}) AND jid = '${jids[0]}' AND event_name = '${event_name}');`
   }
 
-  const getLabs = (event_name) => `SELECT pid,title,lab FROM ${event_name}_projects;`
+  const getLabs = (event_name) => `SELECT pid,title,lab FROM ${event_name}_projects p;`
+
+  const getEvalStats = (event_name, pid) => `SELECT
+  a.pid,
+  COUNT(*) AS allocated,
+  (
+    SELECT COUNT(*)
+    FROM ${event_name}_evaluation ce
+    WHERE ce.pid = a.pid
+  ) AS evaluated
+FROM
+  allocations a
+WHERE
+  a.pid LIKE '${pid}'
+GROUP BY
+  a.pid;
+;
+  `;
+
 
   return {
     updateLab,
     allocate,
     deallocate,
-    getLabs
+    getLabs,
+    getEvalStats
   }
 }
 

@@ -178,28 +178,24 @@ function getRegistrationsController(
 
   async function updateProjectAbstract(req, res, next) {
     try {
-        const { pid, abstract } = req.body
-        const temp = pid.substring(0, 2);
-        let event_name;
-        if (temp === "IM") event_name = "impetus"
-        else if (temp === "CO") event_name = "concepts"
-        else throw new AppError(404, "fail", "Invalid ID");
+      const { pid, abstract } = req.body
+      const temp = pid.substring(0, 2);
+      let event_name;
+      if (temp === "IM") event_name = "impetus"
+      else if (temp === "CO") event_name = "concepts"
+      else throw new AppError(404, "fail", "Invalid ID");
 
-        const updatedAbstract = await eventsServices.updateAbstractFrompid(pid, event_name, abstract);
-        res.status(200).json({ pid, updatedAbstract });
+      const updatedAbstract = await eventsServices.updateAbstractFrompid(pid, event_name, abstract);
+      res.status(200).json({ pid, updatedAbstract });
     } catch (err) {
-        next(err);
+      next(err);
     }
-}
-
-
-
-
-
+  }
 
   function capitalizeFirstLetter(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
+
   async function getSynopsis(req, res, next) {
     try {
       let event_name = req.params.event_name;
@@ -219,6 +215,29 @@ function getRegistrationsController(
     }
   }
 
+  async function backupRegs(req, res, next) {
+    try {
+      const results = await eventsServices.getBackup();
+      await eventsServices.insertBackup(results);
+
+      // res.json({ message: "Data inserted successfully" });
+      res.json(results);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // async function backupRegs(req, res, next) {
+  //   try {
+  //     // let event_name = req.params.event_name;
+  //     const results = await eventsServices.getBackup();
+  //     res.json(results)
+  //   } catch (err) {
+  //     next(err);
+  //   }
+  // }
+
+
   return {
     getUserRegistration,
     getRegistration,
@@ -231,7 +250,7 @@ function getRegistrationsController(
     getProjectAbstract,
     updateProjectAbstract,
     getSynopsis,
-
+    backupRegs
   };
 }
 

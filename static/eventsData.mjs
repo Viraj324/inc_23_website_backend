@@ -8,7 +8,7 @@ const eventsName = ['concepts', 'impetus', 'pradnya']
 const projectDomains = {
     'AD': 'APPLICATION DEVELOPMENT',
     'CN': 'COMMUNICATION NETWORKS AND SECURITY SYSTEMS',
-    'DS': 'DIGITAL / IMAGE/ SPEECH / VIDEO PROCESSING',
+    'DSP': 'DIGITAL / IMAGE/ SPEECH / VIDEO PROCESSING',
     'ES': 'EMBEDDED/VLSI SYSTEMS',
     'ML': 'MACHINE LEARNING AND PATTERN RECOGNITION',
     'OT': 'OTHERS'

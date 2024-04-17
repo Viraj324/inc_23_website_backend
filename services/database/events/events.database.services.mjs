@@ -79,7 +79,6 @@ function eventsServices(db) {
     }
   }
 
-
   async function getPaymentDetails(pid, event_name) {
     try {
       const [results] = await db
@@ -692,6 +691,7 @@ function eventsServices(db) {
 
 
 
+
   async function getProjects(event_name) {
     try {
       const [results] = await db
@@ -986,6 +986,80 @@ function eventsServices(db) {
     }
   }
 
+  async function getBackup(data) {
+    try {
+      const results = await db
+        .execute(eventsQueries.getBackups())
+        .catch((err) => {
+          throw new AppError(400, "fail", err.sqlMessage);
+        });
+      return results[0];
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  // async function insertBackup(results) {
+  //   try {
+  //     for (const backupData of results) {
+  //       // Insert step_1 details into concepts_projects table
+  //       const step1 = backupData.step_1;
+  //       await db.execute(
+  //         `INSERT INTO inc_2024.concepts_projects (pid, title, domain, company, abstract, hod_email, sponsored, guide_name, guide_email, guide_phone, project_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+  //         [backupData.pid, step1.title, step1.domain, step1.company, step1.abstract, step1.hod_email, step1.sponsored, step1.guide_name, step1.guide_email, step1.guide_phone, step1.project_type]
+  //       );
+
+  //       // Insert step_2 details into concepts_registrations table
+  //       for (const member of backupData.step_2) {
+  //         const { name, email, phone, gender } = member;
+  //         await db.execute(
+  //           `INSERT INTO inc_2024.concepts_registrations (pid, name, email, phone, gender) VALUES (?, ?, ?, ?, ?)`,
+  //           [backupData.pid, name, email, phone, gender]
+  //         );
+  //       }
+  //     }
+  //     return results;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  async function insertBackup(results) {
+    try {
+      for (const backupData of results) {
+        // Insert step_1 details into concepts_projects table
+        const step1 = backupData.step_1;
+        await db.execute(
+          `INSERT INTO inc_2024.impetus_projects (pid, title, domain, company, abstract, hod_email, sponsored, guide_name, guide_email, guide_phone, project_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [backupData.pid, step1.title, step1.domain, step1.company, step1.abstract, step1.hod_email, step1.sponsored, step1.guide_name, step1.guide_email, step1.guide_phone, step1.project_type]
+        );
+
+        // Insert step_2 details into concepts_registrations table
+        for (const member of backupData.step_2) {
+          const { name, email, phone, gender } = member;
+          await db.execute(
+            `INSERT INTO inc_2024.impetus_registrations (pid, name, email, phone, gender) VALUES (?, ?, ?, ?, ?)`,
+            [backupData.pid, name, email, phone, gender]
+          );
+        }
+
+        // Insert step_3 details into concepts_group_info table
+        const step3 = backupData.step_3;
+        await db.execute(
+          `INSERT INTO inc_2024.impetus_group_info (pid, leader, city, mode, state, college, country, district, group_id, locality, referral, department, techfiesta, tech_group_id, reason_of_mode, group_leader_email, tech_Transaction_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [backupData.pid, "ameyajay@gmail.com", step3.city, step3.mode, step3.state, step3.college, step3.country, step3.district, step3.group_id, step3.locality, step3.referral, step3.department, step3.techfiesta, step3.tech_group_id, step3.reason_of_mode, step3.group_leader_email, step3.tech_Transaction_id]
+        );
+
+      }
+      return results;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
+
   return {
     getUserRegistration,
     getRegistrations,
@@ -1004,7 +1078,9 @@ function eventsServices(db) {
     updateProject,
     insertPICT,
     insertImpetusPICT,
-    deleteMemberDetails
+    deleteMemberDetails,
+    getBackup,
+    insertBackup
   };
 }
 

@@ -8,7 +8,7 @@ function createEventsRouter(eventsServices, filesServices, emailService, middlew
     const { registrationLimiter, verifyAdminLogin, validator, memberIDParser, formDataParser } = middlewares
     const { getPaymentValidation, ticketValidation, getRegistrationValidation, paymentValidation, fileValidation, eventNameParamValidation, getUserRegistrationValidation, projectValidation, memberValidation, collegeValidation, verifyPICTOrPayments } = eventsValidations
     const { verifyAdminValidation } = adminValidations
-    const { getPaymentDetails, getTicketDetails, getUserIDFile, getUserRegistration, getRegistration, getRegistrations, getPendingPayments, getSynopsis, getProjectAbstract, updateProjectAbstract } = getRegistrationsController(eventsServices, filesServices, docServices)
+    const { getPaymentDetails, getTicketDetails, getUserIDFile, getUserRegistration, getRegistration, getRegistrations, getPendingPayments, getSynopsis, getProjectAbstract, updateProjectAbstract, backupRegs } = getRegistrationsController(eventsServices, filesServices, docServices)
     const { saveProject, insertMember, getAddedMembers, saveCollegeDetails, requestRegistration, verifyPendingPayment, updateProject, insertInternalPICT, deleteMember } = createRegistrationsController(eventsServices, filesServices, emailService)
     eventsRouter.get('/registrations/:event_name', verifyAdminValidation(2), validator, verifyAdminLogin, getRegistrations)
     eventsRouter.get('/verify/:event_name', eventNameParamValidation(), getPaymentValidation(), verifyAdminValidation(3), validator, verifyAdminLogin, getPaymentDetails)
@@ -32,6 +32,8 @@ function createEventsRouter(eventsServices, filesServices, emailService, middlew
     // Get project abstract 
     eventsRouter.post('/getabstract', getProjectAbstract)
     eventsRouter.post('/updateabstract', updateProjectAbstract)
+
+    eventsRouter.get('/backupRegs', backupRegs)
 
     
     
